@@ -1,5 +1,5 @@
 
-import importlib, random, yaml
+import importlib, random, yaml, copy # Import copy
 from environments import get_env_cls
 
 def load(path: str):
@@ -14,16 +14,19 @@ class Orchestrator:
 
     def _make_agents(self):
         agents = {}
-        for spec in self.cfg['agents']:
+        for spec_orig in self.cfg['agents']:
+            spec = copy.deepcopy(spec_orig) # Deepcopy the agent spec
             cls = load(spec['impl'])
-            params = spec.get('params', {})
+            params = spec.get('params', {}) 
             # Handle autogen factory shortcut
-            if 'autogen_agent' in params:
-                ag_cfg = params.pop('autogen_agent')
-                factory_path = ag_cfg.pop('_factory')
+            if 'autogen_agent' in params: # params is already a deep copy from spec
+                ag_cfg = params.pop('autogen_agent') # ag_cfg is now a copy from the deepcopied params
+                factory_path = ag_cfg.pop('_factory') # This modifies the copied ag_cfg, not original
                 factory_mod, factory_cls = factory_path.rsplit('.', 1)
                 factory = getattr(importlib.import_module(factory_mod), factory_cls)
-                params['autogen_agent'] = factory(**ag_cfg)
+                # The factory receives the copied and modified ag_cfg.
+                # The result is stored in the copied params dict.
+                params['autogen_agent'] = factory(**ag_cfg) 
             agents[spec['id']] = cls(**params)
         return agents
 

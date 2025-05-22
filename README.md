@@ -16,3 +16,10 @@ python run_once.py --config configs/demo.yaml
 You’ll see two AutoGen agents playing a price‑setting game; after a few
 steps they tacitly collude, the referee raises an alert, and the
 governor resets the environment.
+
+For a step‑by‑step demonstration with charts and progress bars, run the
+Streamlit UI:
+
+```bash
+streamlit run stream_ui.py
+```

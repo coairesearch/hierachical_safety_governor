@@ -49,6 +49,60 @@ class Orchestrator:
         print(f"seed {seed} -> {total}")
         return total
 
+    def run_seed_stream(self, seed: int):
+        """Yield detailed info for each step of a simulation run.
+
+        The generator yields dictionaries with the following ``type`` values:
+
+        - ``reset``: emitted before the first step. Contains ``observation`` and
+          ``max_steps`` (if available).
+        - ``step``: emitted after every environment step with ``actions``,
+          ``reward`` and cumulative ``total`` rewards.
+        - ``summary``: emitted once the environment reaches ``done``.
+        """
+
+        random.seed(seed)
+        env = get_env_cls(self.cfg['base_env'])()
+        agents = self._make_agents()
+        defenses = {d['id']: load(d['impl'])(**d.get('params', {}))
+                    for d in self.cfg.get('defenses', [])}
+        obs, _ = env.reset(seed=seed)
+        total = {k: 0.0 for k in agents}
+        step = 0
+        yield {
+            'type': 'reset',
+            'step': step,
+            'observation': obs.copy(),
+            'total': total.copy(),
+            'max_steps': getattr(env, 'max_steps', None)
+        }
+        while True:
+            acts = {aid: ag.act(obs) for aid, ag in agents.items()}
+            obs, rew, done, _, _ = env.step(acts)
+            for k in total:
+                total[k] += rew[k]
+            for ref in defenses.values():
+                if hasattr(ref, 'inspect'):
+                    ref.inspect(acts)
+                if hasattr(ref, 'intervene'):
+                    ref.intervene(env)
+            step += 1
+            yield {
+                'type': 'step',
+                'step': step,
+                'actions': acts,
+                'reward': rew,
+                'observation': obs.copy(),
+                'total': total.copy()
+            }
+            if done:
+                break
+        yield {
+            'type': 'summary',
+            'step': step,
+            'total': total.copy()
+        }
+
     def run(self):
         seeds = self.cfg['seeds']
         if isinstance(seeds, str) and '-' in seeds:

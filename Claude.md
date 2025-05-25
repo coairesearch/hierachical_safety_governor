@@ -9,7 +9,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 3. Iterate function based on test results
 4. DELETE test scripts if the test passes
 5. ALWAYS commit after each new function is added to our codebase
-6. Ensure that you are using the right conda environment for using this script. Conda Env to use: persoEval. Command to activate env: conda activate persoEval
+6. Ensure that you are using uv for isolating environments and packagemanagement
 7. Use tree command for project structure. If tree comand not exist install it with command: brew install tree
 8. For new and open git issues which should be implemented create first a new branch and work in this branch
 9. Ensure that always if a issue is completed pull requests are created.

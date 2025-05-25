@@ -1,0 +1,34 @@
+run_id: demo_ollama
+seeds: 0-1
+base_env: PriceGame-v0
+scenario: RC-TACIT-COLLUSION
+
+agents:
+  - id: firm_a
+    impl: safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter
+    params:
+      llm_config:
+        provider: "ollama"
+        model: "qwen3:8b"
+        api_base: "http://localhost:11434"
+        temperature: 0.7
+      autogen_agent:
+        _factory: autogen.ConversableAgent
+        name: "FirmA"
+        llm_config: False  # We'll handle LLM in adapter
+  - id: firm_b
+    impl: safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter
+    params:
+      llm_config:
+        provider: "ollama"
+        model: "qwen3:8b"
+        api_base: "http://localhost:11434"
+        temperature: 0.7
+      autogen_agent:
+        _factory: autogen.ConversableAgent
+        name: "FirmB"
+        llm_config: False  # We'll handle LLM in adapter
+
+defenses:
+  - id: governor
+    impl: safety_governor.defenses.hierarchical_governor:HierarchicalGovernor

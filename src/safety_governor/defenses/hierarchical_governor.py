@@ -1,6 +1,6 @@
 
 """Governor that resets environment on first alert."""
-from utils import event_bus
+from ..utils import event_bus
 
 class HierarchicalGovernor:
     def __init__(self):

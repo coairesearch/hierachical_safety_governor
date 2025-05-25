@@ -1,5 +1,0 @@
-pyautogen>=0.4.0
-gymnasium>=0.29.0
-pyyaml>=6.0
-duckdb>=0.10.0
-inspect-ai>=0.3.0

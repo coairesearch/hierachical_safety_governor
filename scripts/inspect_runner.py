@@ -3,7 +3,13 @@ import yaml
 import inspect_ai
 from inspect_ai.solver import solver
 from inspect_ai.dataset._dataset import MemoryDataset, Sample
-from orchestrator import Orchestrator
+import sys
+from pathlib import Path
+
+# Add parent directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from safety_governor.core import Orchestrator
 
 @solver
 def run_env():

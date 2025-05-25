@@ -1,6 +1,6 @@
 
 """Referee that detects sustained high prices (tacit collusion)."""
-from utils import event_bus
+from ..utils import event_bus
 
 class SimpleCollusionReferee:
     def __init__(self, threshold: int = 8, window: int = 4):

@@ -24,7 +24,7 @@ We'll run a price competition game where:
 source .venv/bin/activate
 
 # Run the demo configuration
-python run_once.py --config configs/demo.yaml
+python scripts/run_once.py --config configs/demo.yaml
 ```
 
 ### 3. Understanding the Output
@@ -52,10 +52,10 @@ For a real-time visualization:
 
 ```bash
 # Using uvx (no installation needed)
-uvx streamlit run stream_ui.py
+uvx streamlit run scripts/stream_ui.py
 
 # Or if streamlit is installed
-streamlit run stream_ui.py
+streamlit run scripts/stream_ui.py
 ```
 
 Open http://localhost:8501 to see:

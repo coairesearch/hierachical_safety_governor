@@ -12,7 +12,6 @@ dependencies = [
     "inspect-ai>=0.3.0",
     "numpy>=1.24.0",
     "streamlit>=1.28.0",
-    "pytest>=7.4.0",
 ]
 
 [project.optional-dependencies]
@@ -20,19 +19,25 @@ dev = [
     "pytest>=7.4.0",
 ]
 
+[project.scripts]
+safety-governor = "scripts.run_once:main"
+safety-governor-ui = "scripts.stream_ui:main"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = [
-    "adapters",
-    "defenses",
-    "environments",
-    "referees",
-    "utils",
-]
+packages = ["src/safety_governor"]
+
+[tool.hatch.build.targets.sdist]
 include = [
-    "orchestrator.py",
-    "run_once.py",
+    "/src",
+    "/scripts",
+    "/configs",
+    "/docs",
+    "/tests",
+    "README.md",
+    "LICENSE",
+    "pyproject.toml",
 ]

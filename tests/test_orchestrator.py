@@ -10,7 +10,7 @@ import yaml
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from orchestrator import Orchestrator, load
+from safety_governor.core.orchestrator import Orchestrator, load, main
 
 
 class TestLoad:
@@ -18,7 +18,7 @@ class TestLoad:
     
     def test_load_valid_module(self):
         """Test loading a valid module and class."""
-        cls = load("adapters.autogen_agent_adapter:AutoGenAgentAdapter")
+        cls = load("safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter")
         assert cls.__name__ == "AutoGenAgentAdapter"
     
     def test_load_invalid_format(self):
@@ -34,7 +34,7 @@ class TestLoad:
     def test_load_missing_class(self):
         """Test loading a non-existent class from valid module."""
         with pytest.raises(AttributeError):
-            load("orchestrator:NonExistentClass")
+            load("safety_governor.core.orchestrator:NonExistentClass")
 
 
 class TestOrchestrator:
@@ -49,7 +49,7 @@ class TestOrchestrator:
             'agents': [
                 {
                     'id': 'firm_a',
-                    'impl': 'adapters.autogen_agent_adapter:AutoGenAgentAdapter',
+                    'impl': 'safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter',
                     'params': {
                         'autogen_agent': {
                             '_factory': 'autogen.ConversableAgent',
@@ -60,7 +60,7 @@ class TestOrchestrator:
                 },
                 {
                     'id': 'firm_b',
-                    'impl': 'adapters.autogen_agent_adapter:AutoGenAgentAdapter',
+                    'impl': 'safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter',
                     'params': {
                         'autogen_agent': {
                             '_factory': 'autogen.ConversableAgent',
@@ -177,7 +177,6 @@ class TestErrorScenarios:
     
     def test_missing_config_file(self):
         """Test with non-existent config file."""
-        from orchestrator import main
         with pytest.raises(SystemExit):
             main("nonexistent.yaml")
     
@@ -187,7 +186,6 @@ class TestErrorScenarios:
             f.write("invalid: yaml: content: [")
             f.flush()
             
-            from orchestrator import main
             with pytest.raises(SystemExit):
                 main(f.name)
             
@@ -199,7 +197,6 @@ class TestErrorScenarios:
             f.write("")
             f.flush()
             
-            from orchestrator import main
             with pytest.raises(SystemExit):
                 main(f.name)
             
@@ -231,7 +228,7 @@ class TestErrorScenarios:
             'agents': [
                 {
                     'id': 'firm_a',
-                    'impl': 'adapters.autogen_agent_adapter:AutoGenAgentAdapter',
+                    'impl': 'safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter',
                     'params': {
                         'autogen_agent': {
                             '_factory': 'autogen.ConversableAgent',
@@ -242,7 +239,7 @@ class TestErrorScenarios:
                 },
                 {
                     'id': 'firm_b',
-                    'impl': 'adapters.autogen_agent_adapter:AutoGenAgentAdapter',
+                    'impl': 'safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter',
                     'params': {
                         'autogen_agent': {
                             '_factory': 'autogen.ConversableAgent',
@@ -255,7 +252,7 @@ class TestErrorScenarios:
             'defenses': [
                 {
                     'id': 'bad_defense',
-                    'impl': 'defenses.hierarchical_governor:HierarchicalGovernor',
+                    'impl': 'safety_governor.defenses.hierarchical_governor:HierarchicalGovernor',
                     'params': {'invalid_param': 123}
                 }
             ],

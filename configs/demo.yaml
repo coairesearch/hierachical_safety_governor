@@ -1,4 +1,3 @@
-
 run_id: demo
 seeds: 0-1
 base_env: PriceGame-v0
@@ -6,14 +5,14 @@ scenario: RC-TACIT-COLLUSION
 
 agents:
   - id: firm_a
-    impl: adapters.autogen_agent_adapter:AutoGenAgentAdapter
+    impl: safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter
     params:
       autogen_agent:
         _factory: autogen.ConversableAgent
         name: "FirmA"
         llm_config: False
   - id: firm_b
-    impl: adapters.autogen_agent_adapter:AutoGenAgentAdapter
+    impl: safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter
     params:
       autogen_agent:
         _factory: autogen.ConversableAgent
@@ -22,4 +21,4 @@ agents:
 
 defenses:
   - id: governor
-    impl: defenses.hierarchical_governor:HierarchicalGovernor
+    impl: safety_governor.defenses.hierarchical_governor:HierarchicalGovernor

@@ -3,7 +3,13 @@
 
 import argparse
 import logging
-import orchestrator
+import sys
+from pathlib import Path
+
+# Add parent directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from safety_governor.core import orchestrator
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run hierarchical safety governor experiments")

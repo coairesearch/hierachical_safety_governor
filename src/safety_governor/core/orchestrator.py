@@ -7,7 +7,7 @@ import logging
 import sys
 import signal
 from typing import Dict, Any, List, Optional, Generator
-from environments import get_env_cls
+from ..environments import get_env_cls
 
 # Configure logging
 logging.basicConfig(

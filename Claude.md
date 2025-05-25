@@ -14,3 +14,6 @@ This file provides guidance to Claude Code when working with code in this reposi
 8. For new and open git issues which should be implemented create first a new branch and work in this branch
 9. Ensure that always if a issue is completed pull requests are created.
 10. Follow the plan.md file in the folder docs for implementing the next issue. 
+
+## Memories
+- Update also the plan in the plan.md file if you finished on issue.

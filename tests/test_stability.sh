@@ -9,7 +9,7 @@ fail_count=0
 
 for i in {1..10}; do
     echo -e "\nRun #$i:"
-    if python run_once.py --config configs/demo.yaml --log-level WARNING > /dev/null 2>&1; then
+    if python ../run_once.py --config ../configs/demo.yaml --log-level WARNING > /dev/null 2>&1; then
         echo "✓ Success"
         ((success_count++))
     else

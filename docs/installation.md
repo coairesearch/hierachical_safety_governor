@@ -47,10 +47,10 @@ source .venv/bin/activate
 
 ```bash
 # Install all dependencies using uv
-uv pip install -r requirements.txt
-
-# Install the project in development mode
 uv pip install -e .
+
+# For development (includes pytest)
+uv pip install -e ".[dev]"
 ```
 
 ## Using uvx for Quick Commands
@@ -97,15 +97,16 @@ export OPENAI_API_KEY="your-api-key-here"
 # Add a new package
 uv pip install package-name
 
-# Add to requirements.txt
-uv pip freeze > requirements.txt
+# Add to pyproject.toml dependencies section manually
+# Then reinstall:
+uv pip install -e .
 ```
 
 ### Updating dependencies
 
 ```bash
 # Update all packages
-uv pip install -r requirements.txt --upgrade
+uv pip install -e . --upgrade
 ```
 
 ## Troubleshooting

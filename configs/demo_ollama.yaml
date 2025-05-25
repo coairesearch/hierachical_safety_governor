@@ -12,6 +12,8 @@ agents:
         model: "qwen3:8b"
         api_base: "http://localhost:11434"
         temperature: 0.7
+      game_type: "price_game"  # Use default price game template
+      agent_index: 0
       autogen_agent:
         _factory: autogen.ConversableAgent
         name: "FirmA"
@@ -24,6 +26,8 @@ agents:
         model: "qwen3:8b"
         api_base: "http://localhost:11434"
         temperature: 0.7
+      game_type: "price_game"  # Use default price game template
+      agent_index: 1
       autogen_agent:
         _factory: autogen.ConversableAgent
         name: "FirmB"

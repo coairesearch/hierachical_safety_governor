@@ -13,3 +13,4 @@ This file provides guidance to Claude Code when working with code in this reposi
 7. Use tree command for project structure. If tree comand not exist install it with command: brew install tree
 8. For new and open git issues which should be implemented create first a new branch and work in this branch
 9. Ensure that always if a issue is completed pull requests are created.
+10. Follow the plan.md file in the folder docs for implementing the next issue. 

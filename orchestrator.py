@@ -1,5 +1,5 @@
 
-import importlib, random, yaml
+import importlib, random, yaml, copy # Import copy
 from environments import get_env_cls
 
 def load(path: str):
@@ -14,16 +14,19 @@ class Orchestrator:
 
     def _make_agents(self):
         agents = {}
-        for spec in self.cfg['agents']:
+        for spec_orig in self.cfg['agents']:
+            spec = copy.deepcopy(spec_orig) # Deepcopy the agent spec
             cls = load(spec['impl'])
-            params = spec.get('params', {})
+            params = spec.get('params', {}) 
             # Handle autogen factory shortcut
-            if 'autogen_agent' in params:
-                ag_cfg = params.pop('autogen_agent')
-                factory_path = ag_cfg.pop('_factory')
+            if 'autogen_agent' in params: # params is already a deep copy from spec
+                ag_cfg = params.pop('autogen_agent') # ag_cfg is now a copy from the deepcopied params
+                factory_path = ag_cfg.pop('_factory') # This modifies the copied ag_cfg, not original
                 factory_mod, factory_cls = factory_path.rsplit('.', 1)
                 factory = getattr(importlib.import_module(factory_mod), factory_cls)
-                params['autogen_agent'] = factory(**ag_cfg)
+                # The factory receives the copied and modified ag_cfg.
+                # The result is stored in the copied params dict.
+                params['autogen_agent'] = factory(**ag_cfg) 
             agents[spec['id']] = cls(**params)
         return agents
 
@@ -45,6 +48,60 @@ class Orchestrator:
             if done: break
         print(f"seed {seed} -> {total}")
         return total
+
+    def run_seed_stream(self, seed: int):
+        """Yield detailed info for each step of a simulation run.
+
+        The generator yields dictionaries with the following ``type`` values:
+
+        - ``reset``: emitted before the first step. Contains ``observation`` and
+          ``max_steps`` (if available).
+        - ``step``: emitted after every environment step with ``actions``,
+          ``reward`` and cumulative ``total`` rewards.
+        - ``summary``: emitted once the environment reaches ``done``.
+        """
+
+        random.seed(seed)
+        env = get_env_cls(self.cfg['base_env'])()
+        agents = self._make_agents()
+        defenses = {d['id']: load(d['impl'])(**d.get('params', {}))
+                    for d in self.cfg.get('defenses', [])}
+        obs, _ = env.reset(seed=seed)
+        total = {k: 0.0 for k in agents}
+        step = 0
+        yield {
+            'type': 'reset',
+            'step': step,
+            'observation': obs.copy(),
+            'total': total.copy(),
+            'max_steps': getattr(env, 'max_steps', None)
+        }
+        while True:
+            acts = {aid: ag.act(obs) for aid, ag in agents.items()}
+            obs, rew, done, _, _ = env.step(acts)
+            for k in total:
+                total[k] += rew[k]
+            for ref in defenses.values():
+                if hasattr(ref, 'inspect'):
+                    ref.inspect(acts)
+                if hasattr(ref, 'intervene'):
+                    ref.intervene(env)
+            step += 1
+            yield {
+                'type': 'step',
+                'step': step,
+                'actions': acts,
+                'reward': rew,
+                'observation': obs.copy(),
+                'total': total.copy()
+            }
+            if done:
+                break
+        yield {
+            'type': 'summary',
+            'step': step,
+            'total': total.copy()
+        }
 
     def run(self):
         seeds = self.cfg['seeds']

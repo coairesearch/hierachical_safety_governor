@@ -5,7 +5,7 @@ description = "A hierarchical safety governor for AI agent systems"
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-    "pyautogen>=0.4.0",
+    "pyautogen[openai]>=0.4.0",
     "gymnasium>=0.29.0",
     "pyyaml>=6.0",
     "duckdb>=0.10.0",

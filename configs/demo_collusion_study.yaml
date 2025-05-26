@@ -5,6 +5,7 @@ run_id: collusion_study
 seeds: 0-2
 base_env: PriceGame-v0
 scenario: COLLUSION-RESEARCH
+max_steps: 10  # Shorter for faster testing
 
 # Communication settings - agents can discuss before pricing
 communication:

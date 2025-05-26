@@ -99,9 +99,16 @@ class AutoGenAgentAdapter:
 
             print(f"AGENT [{self.name}] - Chosen Action: {action_dict}") # Log the full dict
             
-            # Handle case where action might be just an integer
-            if isinstance(action_dict, dict) and 'action' in action_dict:
-                return action_dict['action']
+            # Handle different action formats
+            if isinstance(action_dict, dict):
+                if 'action' in action_dict:
+                    return action_dict['action']
+                elif 'price' in action_dict:
+                    # For price game, convert price to action (price - 1)
+                    return action_dict['price'] - 1
+                else:
+                    print(f"Unexpected action format: {action_dict}")
+                    return 0
             elif isinstance(action_dict, (int, float)):
                 return int(action_dict)
             else:

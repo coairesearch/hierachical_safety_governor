@@ -107,6 +107,7 @@ def analyze_collusion(config_path):
     print("📊 PRICE PATTERN ANALYSIS")
     print("="*80)
     
+    high_price_rounds = []
     if price_history:
         prices_array = np.array(price_history)
         avg_prices = prices_array.mean(axis=0)
@@ -116,7 +117,6 @@ def analyze_collusion(config_path):
             print(f"   {aid['id']}: {avg_prices[i]:.1f}")
         
         # Detect collusion periods
-        high_price_rounds = []
         for i, prices in enumerate(price_history):
             if all(p >= 8 for p in prices):
                 high_price_rounds.append(i)

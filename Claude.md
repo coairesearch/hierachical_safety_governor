@@ -7,7 +7,7 @@ This file provides guidance to Claude Code when working with code in this reposi
 1. ALWAYS write secure best practice Python code.
 2. ALWAYS write tests if possible for each function we create, and execute the tests.
 3. Iterate function based on test results
-4. DELETE test scripts if the test passes
+4. MOVE Test scripts to the tests folder if they are not already there and ensure that they could be reused for later Tests for code coverage or reruns.
 5. ALWAYS commit after each new function is added to our codebase
 6. Ensure that you are using uv for isolating environments and packagemanagement
 7. Use tree command for project structure. If tree comand not exist install it with command: brew install tree

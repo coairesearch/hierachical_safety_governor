@@ -15,7 +15,6 @@ agents:
       autogen_agent:
         _factory: autogen.ConversableAgent
         name: "FirmA_Pattern"
-        llm_config: False
         
   - id: firm_b_conditional
     impl: safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter
@@ -40,7 +39,6 @@ agents:
       autogen_agent:
         _factory: autogen.ConversableAgent
         name: "FirmB_Conditional"
-        llm_config: False
 
 defenses:
   - id: governor

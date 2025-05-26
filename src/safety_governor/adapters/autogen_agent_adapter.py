@@ -31,9 +31,6 @@ class AutoGenAgentAdapter:
         if llm_config and isinstance(llm_config, dict):
             self.llm_client = LLMClient(llm_config)
             print(f"AGENT [{self.name}] - Initialized with LLM config: {llm_config}")
-        elif hasattr(self.agent, 'llm_config') and isinstance(self.agent.llm_config, dict):
-            self.llm_client = LLMClient(self.agent.llm_config)
-            print(f"AGENT [{self.name}] - Initialized with agent's LLM config")
         
         if system_prompt:
             self.agent.send(system_prompt, recipient=self.agent, request_reply=False)
@@ -59,7 +56,7 @@ class AutoGenAgentAdapter:
             # Format the prompt using the template and observation
             formatted_prompt = format_prompt(self.prompt_template, observation_for_json, self.agent_index)
 
-            print(f"AGENT [{self.name}] - LLM Config: {self.agent.llm_config}, Has Client: {self.llm_client is not None}")
+            print(f"AGENT [{self.name}] - Has LLM: {self.llm_client is not None}, Has Mock Behavior: {hasattr(self, 'mock_behavior') and self.mock_behavior is not None}")
             
             if self.llm_client:
                 # Use our LLM client for generation

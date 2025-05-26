@@ -12,6 +12,15 @@ The framework supports multiple LLM providers:
 
 Additionally, agents can be configured with **mock behaviors** for testing without LLM calls.
 
+## How Agent Behavior is Determined
+
+The AutoGenAgentAdapter uses the following priority order:
+1. If `llm_config` is provided with a valid provider → Use LLM
+2. Else if `mock_behavior` is provided → Use mock behavior
+3. Else → Fall back to AutoGen's default behavior
+
+**Note:** You don't need to set `llm_config: False` in the autogen_agent section. The adapter automatically determines whether to use LLMs based on the presence of valid configuration.
+
 ## Setting up Ollama (Recommended for local testing)
 
 1. **Install Ollama**
@@ -57,7 +66,6 @@ agents:
       autogen_agent:
         _factory: autogen.ConversableAgent
         name: "FirmA"
-        llm_config: False  # We handle LLM in adapter
 ```
 
 ### Using OpenAI
@@ -75,7 +83,6 @@ agents:
       autogen_agent:
         _factory: autogen.ConversableAgent
         name: "FirmA"
-        llm_config: False
 ```
 
 Set your API key:
@@ -98,7 +105,6 @@ agents:
       autogen_agent:
         _factory: autogen.ConversableAgent
         name: "FirmA"
-        llm_config: False
 ```
 
 Set your API key:
@@ -121,7 +127,6 @@ agents:
       autogen_agent:
         _factory: autogen.ConversableAgent
         name: "FirmA"
-        llm_config: False
 ```
 
 Set your API key:

@@ -12,10 +12,12 @@ from dataclasses import dataclass
 import json
 
 import numpy as np
+import random
 
 from .orchestrator import Orchestrator
 from ..utils import CommunicationManager, Message, MessageType, event_bus
 from ..adapters import AutoGenAgentAdapter
+from ..environments import get_env_cls
 
 
 logger = logging.getLogger(__name__)
@@ -89,7 +91,7 @@ class ParallelOrchestrator(Orchestrator):
                     logger.debug(f"Agent {agent_id} received message: {message.id}")
             
             # Register agent with communication manager
-            groups = self.config.get('agent_groups', {}).get(agent_id, [])
+            groups = self.cfg.get('agent_groups', {}).get(agent_id, [])
             self.comm_manager.register_agent(
                 agent_id=agent_id,
                 agent_instance=agent,
@@ -129,7 +131,7 @@ class ParallelOrchestrator(Orchestrator):
             tasks[agent_id] = task
         
         # Wait for all agents to complete with timeout
-        timeout = self.config.get('action_timeout', 60.0)
+        timeout = self.cfg.get('action_timeout', 60.0)
         try:
             results = await asyncio.wait_for(
                 asyncio.gather(*tasks.values(), return_exceptions=True),
@@ -232,12 +234,19 @@ class ParallelOrchestrator(Orchestrator):
             Dictionary of metrics from the episode
         """
         np.random.seed(seed)
+        random.seed(seed)
         
-        # Create environment and agents
-        env = self._create_environment()
-        agents = self._create_agents()
-        defenses = self._create_defenses()
-        referees = self._create_referees()
+        # Create environment
+        if 'base_env' not in self.cfg:
+            raise ValueError("Missing 'base_env' in configuration")
+        env = get_env_cls(self.cfg['base_env'])()
+        
+        # Create agents and defenses
+        agents = self._make_agents()
+        if not agents:
+            raise ValueError("No agents were successfully created")
+        defenses = self._build('defenses')
+        referees = self._build('referees')
         
         # Setup agents with communication
         await self.setup_agents_with_communication(agents)
@@ -248,7 +257,7 @@ class ParallelOrchestrator(Orchestrator):
         
         # Episode loop
         step_count = 0
-        max_steps = self.config.get('max_steps', 100)
+        max_steps = self.cfg.get('max_steps', getattr(env, 'max_steps', 100))
         
         while not self.shutdown_requested and step_count < max_steps:
             # Communication phase (if enabled)
@@ -279,12 +288,14 @@ class ParallelOrchestrator(Orchestrator):
             
             # Apply referees
             for ref_id, referee in referees.items():
-                violations = referee.check_violations(actions, obs, env)
-                event_bus.publish("referee_violations", {
-                    "referee_id": ref_id,
-                    "violations": violations,
-                    "step": step_count
-                })
+                if hasattr(referee, 'inspect'):
+                    violation_detected = referee.inspect(actions)
+                    if violation_detected:
+                        event_bus.publish("referee_violations", {
+                            "referee_id": ref_id,
+                            "violations": True,
+                            "step": step_count
+                        })
             
             # Update returns
             for aid in agents.keys():
@@ -353,12 +364,19 @@ class ParallelOrchestrator(Orchestrator):
             Final episode metrics
         """
         np.random.seed(seed)
+        random.seed(seed)
         
-        # Create environment and agents
-        env = self._create_environment()
-        agents = self._create_agents()
-        defenses = self._create_defenses()
-        referees = self._create_referees()
+        # Create environment
+        if 'base_env' not in self.cfg:
+            raise ValueError("Missing 'base_env' in configuration")
+        env = get_env_cls(self.cfg['base_env'])()
+        
+        # Create agents and defenses
+        agents = self._make_agents()
+        if not agents:
+            raise ValueError("No agents were successfully created")
+        defenses = self._build('defenses')
+        referees = self._build('referees')
         
         # Setup agents with communication
         await self.setup_agents_with_communication(agents)
@@ -377,7 +395,7 @@ class ParallelOrchestrator(Orchestrator):
         
         # Episode loop
         step_count = 0
-        max_steps = self.config.get('max_steps', 100)
+        max_steps = self.cfg.get('max_steps', getattr(env, 'max_steps', 100))
         
         while not self.shutdown_requested and step_count < max_steps:
             # Communication phase
@@ -421,9 +439,10 @@ class ParallelOrchestrator(Orchestrator):
             # Apply referees
             violations = {}
             for ref_id, referee in referees.items():
-                ref_violations = referee.check_violations(actions, obs, env)
-                if ref_violations:
-                    violations[ref_id] = ref_violations
+                if hasattr(referee, 'inspect'):
+                    violation_detected = referee.inspect(actions)
+                    if violation_detected:
+                        violations[ref_id] = True
             
             # Update returns
             for aid in agents.keys():

@@ -17,7 +17,7 @@ communication:
   max_rounds: 3  # Number of communication rounds before each decision
   timeout_per_round: 10.0  # Seconds per communication round
   allow_private_messages: true
-  allow_broadcast: true
+  allow_broadcast: False
   log_communications: true
 
 # Environment configuration remains the same

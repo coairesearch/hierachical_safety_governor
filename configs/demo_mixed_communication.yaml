@@ -44,6 +44,7 @@ agents:
         human_input_mode: "NEVER"
         code_execution_config: False
 
+
 defenses: []
 referees: []
 max_steps: 2

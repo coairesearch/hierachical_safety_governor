@@ -17,7 +17,7 @@ pip install -e .
 ```bash
 # Install Ollama from https://ollama.ai
 # Pull a model
-ollama pull qwen3:8b
+ollama pull deepseek-r1:1.5b
 
 # Verify it's running
 ollama list
@@ -40,9 +40,6 @@ python scripts/test_llm_connection.py --provider ollama
 
 ### 4. Run Your First Experiment
 ```bash
-# Basic single-agent example
-python scripts/run.py --config configs/example_basic.yaml
-
 # With communication between agents
 python scripts/run.py --config configs/example_communication.yaml
 ```
@@ -51,10 +48,6 @@ python scripts/run.py --config configs/example_communication.yaml
 
 ### When to Use Each Config
 
-1. **`example_basic.yaml`** - Start here!
-   - Single agent learning to set prices
-   - Simplest configuration
-   - Good for testing LLM setup
 
 2. **`example_communication.yaml`** - Agent coordination
    - Two agents that can communicate

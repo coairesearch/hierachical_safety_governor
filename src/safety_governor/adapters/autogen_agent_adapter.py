@@ -102,10 +102,13 @@ class AutoGenAgentAdapter:
             # Handle different action formats
             if isinstance(action_dict, dict):
                 if 'action' in action_dict:
-                    return action_dict['action']
+                    # Convert to int if it's a string
+                    action = action_dict['action']
+                    return int(action) if isinstance(action, (str, int, float)) else 0
                 elif 'price' in action_dict:
                     # For price game, convert price to action (price - 1)
-                    return action_dict['price'] - 1
+                    price = action_dict['price']
+                    return int(price) - 1 if isinstance(price, (str, int, float)) else 0
                 else:
                     print(f"Unexpected action format: {action_dict}")
                     return 0

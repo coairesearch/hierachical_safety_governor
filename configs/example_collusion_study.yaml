@@ -41,7 +41,7 @@ agents:
         deception_rate: 0.1
       llm_config:
         provider: "ollama"
-        model: "qwen3:8b"  # Use larger model for complex reasoning
+        model: "deepseek-r1:1.5b"  # Use larger model for complex reasoning
         temperature: 0.5    # Lower temp for consistency
         max_tokens: 200
       system_prompt: |
@@ -76,7 +76,7 @@ agents:
         deception_rate: 0.6  # Higher deception rate
       llm_config:
         provider: "ollama"
-        model: "qwen3:8b"
+        model: "deepseek-r1:1.5b"
         temperature: 0.6
         max_tokens: 200
       system_prompt: |

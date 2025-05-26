@@ -22,7 +22,7 @@ def test_connection(provider: str, model: str = None, api_key: str = None):
     
     # Default models
     default_models = {
-        "ollama": "qwen3:8b",
+        "ollama": "deepseek-r1:1.5b",
         "openai": "gpt-3.5-turbo",
         "anthropic": "claude-3-sonnet-20240229",
         "fireworks": "accounts/fireworks/models/llama-v3-70b-instruct"

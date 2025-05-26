@@ -14,7 +14,7 @@ agents:
       name: "TestAgent"
       llm_config:
         provider: "ollama"
-        model: "qwen3:8b"
+        model: "deepseek-r1:1.5b"
         temperature: 0.1
         max_tokens: 50
       system_prompt: "Test agent. Always output valid JSON."

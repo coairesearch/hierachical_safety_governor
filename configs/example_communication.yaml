@@ -24,8 +24,8 @@ agents:
       name: "FirmA"
       communication_strategy:
         strategy_type: "honest"  # Options: honest, deceptive, strategic
-        broadcast_probability: 0.8
-        private_message_probability: 0.2
+        broadcast_probability: 0.5
+        private_message_probability: 0.8
       llm_config:
         provider: "ollama"
         model: "deepseek-r1:1.5b"
@@ -47,8 +47,8 @@ agents:
       name: "FirmB"
       communication_strategy:
         strategy_type: "strategic"
-        broadcast_probability: 0.5
-        private_message_probability: 0.5
+        broadcast_probability: 0.2
+        private_message_probability: 0.7
       llm_config:
         provider: "ollama"
         model: "deepseek-r1:1.5b"

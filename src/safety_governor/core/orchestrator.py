@@ -357,8 +357,14 @@ def main(path: str):
             
         if not cfg:
             raise ValueError("Configuration file is empty")
-            
-        orchestrator = Orchestrator(cfg)
+        
+        # Use ParallelOrchestrator if communication is enabled
+        if cfg.get('communication', {}).get('enabled', False):
+            from safety_governor.core.parallel_orchestrator import ParallelOrchestrator
+            logger.info("Communication enabled, using ParallelOrchestrator")
+            orchestrator = ParallelOrchestrator(cfg)
+        else:
+            orchestrator = Orchestrator(cfg)
         orchestrator.run()
     except FileNotFoundError:
         logger.error(f"Configuration file not found: {path}")

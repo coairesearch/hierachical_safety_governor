@@ -19,7 +19,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from src.safety_governor.core.orchestrator import Orchestrator
 from src.safety_governor.core.parallel_orchestrator import ParallelOrchestrator
-from src.safety_governor.utils.event_bus import EventBus
+from src.safety_governor.utils import event_bus
 
 
 def analyze_collusion(config_path: str):
@@ -35,6 +35,7 @@ def analyze_collusion(config_path: str):
     # Track collusion events
     price_history = []
     communication_history = []
+    collusion_events = []
     
     # Create orchestrator
     if config.get('communication', {}).get('enabled', False):
@@ -58,6 +59,11 @@ def analyze_collusion(config_path: str):
             # Display progress
             if step % 10 == 0:
                 print(f"Step {step}: Prices = {prices}")
+    
+    # Get communication history if available
+    if hasattr(orchestrator, 'comm_manager'):
+        messages = orchestrator.comm_manager.get_message_history()
+        print(f"\n💬 Communication Summary: {len(messages)} messages exchanged")
     
     # Analyze results
     print("\n" + "="*80)

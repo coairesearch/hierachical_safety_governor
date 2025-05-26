@@ -54,7 +54,12 @@ class AutoGenAgentAdapter:
                     observation_for_json[key] = value.tolist()
 
             # Format the prompt using the template and observation
-            formatted_prompt = format_prompt(self.prompt_template, observation_for_json, self.agent_index)
+            # If prompt_template is a game type string, get the actual template
+            if self.prompt_template in ["price_game", "commons_game", "auction_game", "trust_game"]:
+                actual_template = get_prompt_template(self.prompt_template)
+            else:
+                actual_template = self.prompt_template
+            formatted_prompt = format_prompt(actual_template, observation_for_json, self.agent_index)
 
             print(f"AGENT [{self.name}] - Has LLM: {self.llm_client is not None}, Has Mock Behavior: {hasattr(self, 'mock_behavior') and self.mock_behavior is not None}")
             

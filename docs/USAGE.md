@@ -100,6 +100,17 @@ python scripts/analyze.py --mode collusion --config configs/example_collusion_st
 python scripts/analyze.py --mode communication --results results/experiment_123/
 ```
 
+### Viewing Communication Messages
+Communication messages are logged at INFO level. To see them:
+```bash
+# Run with INFO logging (shows communication messages)
+python scripts/run.py --config configs/example_communication.yaml --log-level INFO
+
+# Look for lines like:
+# CommunicationManager - INFO - Message: {"sender": "firm_a", "recipients": ["firm_b"], ...}
+# AGENT [FirmA] - Sent broadcast: {'type': 'proposal', ...}
+```
+
 ### Summary of All Experiments
 ```bash
 # Get overview of all past experiments

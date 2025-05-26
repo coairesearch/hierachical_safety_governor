@@ -16,13 +16,10 @@ class LLMClient:
         self.api_key = config.get("api_key", os.getenv(f"{self.provider.upper()}_API_KEY"))
         self.temperature = config.get("temperature", 0.7)
         self.max_tokens = config.get("max_tokens", 150)
-        self.mock_responses = config.get("mock_responses", [])
         
     def generate(self, prompt: str) -> str:
         """Generate response from LLM"""
-        if self.provider == "mock":
-            return self._mock_generate(prompt)
-        elif self.provider == "ollama":
+        if self.provider == "ollama":
             return self._ollama_generate(prompt)
         elif self.provider == "openai":
             return self._openai_generate(prompt)
@@ -32,17 +29,6 @@ class LLMClient:
             return self._fireworks_generate(prompt)
         else:
             raise ValueError(f"Unknown provider: {self.provider}")
-    
-    def _mock_generate(self, prompt: str) -> str:
-        """Generate using mock responses based on pattern matching"""
-        # Check each mock response for pattern match
-        for mock in self.mock_responses:
-            pattern = mock.get("pattern", "")
-            if pattern.lower() in prompt.lower():
-                return mock.get("response", '{"action": 0}')
-        
-        # Default response if no pattern matches
-        return '{"action": 0}'
     
     def _ollama_generate(self, prompt: str) -> str:
         """Generate using Ollama API"""

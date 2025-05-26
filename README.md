@@ -16,18 +16,29 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 bash install.sh
 ```
 
-### Run the demo
+### Test LLM Connection
 ```bash
 source .venv/bin/activate
-export OPENAI_API_KEY="your-api-key-here"  # Set your OpenAI API key
-python scripts/run_once.py --config configs/demo.yaml
+
+# For Ollama (local, free)
+ollama pull qwen3:8b
+python scripts/test_llm_connection.py --provider ollama
+
+# For OpenAI
+export OPENAI_API_KEY="your-api-key-here"
+python scripts/test_llm_connection.py --provider openai
 ```
 
-### Alternative: Using uvx (without activation)
+### Run the demo
 ```bash
-# Set your OpenAI API key first
-export OPENAI_API_KEY="your-api-key-here"
-uvx --from . python scripts/run_once.py --config configs/demo.yaml
+# Basic example
+python scripts/run.py --config configs/example_basic.yaml
+
+# With agent communication
+python scripts/run.py --config configs/example_communication.yaml
+
+# Full collusion study
+python scripts/run.py --config configs/example_collusion_study.yaml
 ```
 
 You'll see two AutoGen agents playing a price‑setting game; after a few

@@ -5,7 +5,7 @@ description = "A hierarchical safety governor for AI agent systems"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "pyautogen[openai]>=0.4.0",
+    "pyautogen[openai]==0.9.1",
     "gymnasium>=0.29.0",
     "pyyaml>=6.0",
     "duckdb>=0.10.0",
@@ -23,8 +23,9 @@ dev = [
 ]
 
 [project.scripts]
-safety-governor = "scripts.run_once:main"
+safety-governor = "scripts.run:main"
 safety-governor-ui = "scripts.stream_ui:main"
+safety-governor-analyze = "scripts.analyze:main"
 
 [build-system]
 requires = ["hatchling"]

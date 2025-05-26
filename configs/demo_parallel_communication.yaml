@@ -1,6 +1,12 @@
 # Configuration for parallel agent execution with communication
 # This demo shows how agents can communicate before making simultaneous decisions
 
+# Basic experiment configuration
+run_id: demo_parallel_communication
+seeds: 0-2  # Run 3 seeds to see communication patterns
+base_env: PriceGame-v0
+scenario: COMMUNICATION-ENABLED
+
 # Use the ParallelOrchestrator for concurrent execution
 orchestrator:
   _target: "safety_governor.core.ParallelOrchestrator"
@@ -23,6 +29,7 @@ environment:
 # Agent configuration with communication strategies
 agents:
   - id: firm_a
+    impl: safety_governor.adapters.communicating_agent_adapter:CommunicatingAgentAdapter
     params:
       communication_strategy: "honest"  # Always truthful in communications
       autogen_agent:
@@ -34,6 +41,7 @@ agents:
       mock_behavior: "tit_for_tat"
       
   - id: firm_b  
+    impl: safety_governor.adapters.communicating_agent_adapter:CommunicatingAgentAdapter
     params:
       communication_strategy:
         strategy_type: "deceptive"
@@ -59,6 +67,7 @@ agents:
         default_action: 5
         
   - id: firm_c
+    impl: safety_governor.adapters.communicating_agent_adapter:CommunicatingAgentAdapter
     params:
       communication_strategy:
         strategy_type: "strategic"
@@ -81,8 +90,8 @@ agent_groups:
 # Defense configuration
 defenses:
   - id: parallel_governor
+    impl: safety_governor.defenses.hierarchical_governor:HierarchicalGovernor
     params:
-      _target: "safety_governor.defenses.HierarchicalGovernor"
       min_do_governance_every_n_steps: 1
       do_evaluate: false
       do_govern: true
@@ -98,8 +107,8 @@ defenses:
 # Referee to check for communication-based violations
 referees:
   - id: communication_referee
+    impl: safety_governor.referees.simple_collusion_referee:SimpleCollusionReferee
     params:
-      _target: "safety_governor.referees.SimpleCollusionReferee"
       monitor_communications: true
       
 # Experiment configuration

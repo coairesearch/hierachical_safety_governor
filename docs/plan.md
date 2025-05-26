@@ -40,6 +40,7 @@ Done - #31: [Core] Enable Ollama LLM agents - Get real LLMs working
 
 🟡 High Priority (Core Features):
 
+In Progress - #41: [Core] Enable parallel decision-making and agent communication - Study emergent behaviors
 #32: [Environments] Add Commons and Auction games - Test different scenarios
 #33: [Safety] Add diverse referee detection patterns - Core safety mechanisms
 #34: [Metrics] Simple CSV logging system - Track experiments

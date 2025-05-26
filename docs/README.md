@@ -13,6 +13,8 @@ Welcome to the Hierarchical Safety Governor documentation. This framework provid
 - [Running Experiments](./guides/running-experiments.md) - Design and execute research experiments
 - [Analyzing Results](./guides/analyzing-results.md) - Interpret metrics and outputs
 - [Configuration Reference](./guides/configuration.md) - Customize experiment parameters
+- [Parallel Communication](./guides/parallel-communication.md) - Enable agent-to-agent communication
+- [LLM Setup](./guides/llm-setup.md) - Configure language models for agents
 
 ### Developer Guides
 - [Architecture Overview](./architecture/overview.md) - System design and components

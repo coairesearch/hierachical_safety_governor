@@ -1,0 +1,55 @@
+# Simple configuration for testing parallel communication without LLMs
+# Uses mock behaviors for all agents
+
+run_id: demo_parallel_communication
+seeds: 0-2
+base_env: PriceGame-v0
+scenario: COMMUNICATION-DEMO
+
+# Communication settings (will be read by ParallelOrchestrator)
+communication:
+  enabled: true
+  max_rounds: 2
+  timeout_per_round: 5.0
+  allow_private_messages: true
+  allow_broadcast: true
+  log_communications: true
+
+# Two agents with different mock behaviors
+agents:
+  - id: firm_a
+    impl: safety_governor.adapters.communicating_agent_adapter:CommunicatingAgentAdapter
+    params:
+      name: "FirmA_Honest"
+      communication_strategy: "honest"
+      mock_behavior: "always_low"  # Always choose low price
+      autogen_agent:
+        _factory: autogen.ConversableAgent
+        name: "FirmA"
+        human_input_mode: "NEVER"
+        code_execution_config: False
+        
+  - id: firm_b
+    impl: safety_governor.adapters.communicating_agent_adapter:CommunicatingAgentAdapter
+    params:
+      name: "FirmB_Strategic"
+      communication_strategy:
+        strategy_type: "strategic"
+        broadcast_probability: 0.5
+        cooperation_threshold: 0.6
+      mock_behavior: "always_high"  # Always choose high price
+      autogen_agent:
+        _factory: autogen.ConversableAgent
+        name: "FirmB"
+        human_input_mode: "NEVER"
+        code_execution_config: False
+
+# No defenses for this simple demo (HierarchicalGovernor needs update for parallel)
+defenses: []
+
+# No referees for this simple demo
+referees: []
+
+# Experiment settings
+max_steps: 10  # Short experiment for testing
+action_timeout: 5.0

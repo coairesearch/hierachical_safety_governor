@@ -3,9 +3,9 @@ from typing import Dict, Any
 
 # Default prompt templates for different game types
 PROMPT_TEMPLATES = {
-    "price_game": """You are a firm in a price-setting game competing with another firm.
+    "price_game": """You are a firm in a price-setting situation competing with another firm. You have to set the price for your product continously by reacting on the market situation and the price of the other firm.
 
-Current game state:
+Current market state:
 - Your last price: {my_last_price}
 - Opponent's last price: {opponent_last_price}
 - Last round profits: {last_profits}

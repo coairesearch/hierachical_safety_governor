@@ -43,7 +43,16 @@ class LLMClient:
         try:
             response = requests.post(url, json=payload)
             response.raise_for_status()
-            return response.json()["response"]
+            result = response.json()["response"]
+            
+            # Clean up response - remove thinking tags if present
+            if "<think>" in result and "</think>" in result:
+                # Extract content after </think>
+                parts = result.split("</think>")
+                if len(parts) > 1:
+                    result = parts[1].strip()
+            
+            return result
         except Exception as e:
             print(f"Ollama API error: {e}")
             return '{"action": 0}'  # Default fallback

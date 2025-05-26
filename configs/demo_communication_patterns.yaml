@@ -1,0 +1,58 @@
+# Demo showing different communication patterns
+run_id: demo_communication_patterns
+seeds: 0
+base_env: PriceGame-v0
+scenario: COMMUNICATION-PATTERNS-DEMO
+
+# More communication rounds to see patterns
+communication:
+  enabled: true
+  max_rounds: 3  # Multiple rounds per step
+  timeout_per_round: 5.0
+  allow_private_messages: true
+  allow_broadcast: true
+  log_communications: true
+
+agents:
+  - id: firm_a
+    impl: safety_governor.adapters.communicating_agent_adapter:CommunicatingAgentAdapter
+    params:
+      name: "FirmA_Broadcaster"
+      # This agent primarily broadcasts
+      communication_strategy:
+        strategy_type: "honest"
+        broadcast_probability: 0.9  # High broadcast rate
+        private_message_probability: 0.2  # Low private message rate
+      mock_behavior: "always_medium"
+      autogen_agent:
+        _factory: autogen.ConversableAgent
+        name: "FirmA"
+        human_input_mode: "NEVER"
+        code_execution_config: False
+        
+  - id: firm_b
+    impl: safety_governor.adapters.communicating_agent_adapter:CommunicatingAgentAdapter
+    params:
+      name: "FirmB_PrivateMessenger"
+      # This agent prefers private messages
+      communication_strategy:
+        strategy_type: "strategic"
+        broadcast_probability: 0.2  # Low broadcast rate
+        private_message_probability: 0.9  # High private message rate
+        cooperation_threshold: 0.5
+      mock_behavior: "tit_for_tat"
+      autogen_agent:
+        _factory: autogen.ConversableAgent
+        name: "FirmB"
+        human_input_mode: "NEVER"
+        code_execution_config: False
+
+# Groups for testing group messages
+agent_groups:
+  firm_a: ["broadcasters", "all_firms"]
+  firm_b: ["private_messengers", "all_firms"]
+
+defenses: []
+referees: []
+max_steps: 3
+action_timeout: 10.0

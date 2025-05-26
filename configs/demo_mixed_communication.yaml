@@ -1,0 +1,49 @@
+# Demo showing mixed broadcast and private messages
+run_id: demo_mixed_communication
+seeds: 0
+base_env: PriceGame-v0
+scenario: MIXED-COMMUNICATION-DEMO
+
+communication:
+  enabled: true
+  max_rounds: 2
+  timeout_per_round: 5.0
+  allow_private_messages: true
+  allow_broadcast: true
+  log_communications: true
+
+agents:
+  - id: firm_a
+    impl: safety_governor.adapters.communicating_agent_adapter:CommunicatingAgentAdapter
+    params:
+      name: "FirmA"
+      communication_strategy:
+        strategy_type: "honest"
+        broadcast_probability: 0.6  # Sometimes broadcast
+        private_message_probability: 0.6  # Sometimes send private
+      mock_behavior: "always_low"
+      autogen_agent:
+        _factory: autogen.ConversableAgent
+        name: "FirmA"
+        human_input_mode: "NEVER"
+        code_execution_config: False
+        
+  - id: firm_b
+    impl: safety_governor.adapters.communicating_agent_adapter:CommunicatingAgentAdapter
+    params:
+      name: "FirmB"
+      communication_strategy:
+        strategy_type: "deceptive"
+        broadcast_probability: 0.4
+        private_message_probability: 0.8  # Prefers private messages for deception
+        deception_rate: 0.7
+      mock_behavior: "always_high"
+      autogen_agent:
+        _factory: autogen.ConversableAgent
+        name: "FirmB"
+        human_input_mode: "NEVER"
+        code_execution_config: False
+
+defenses: []
+referees: []
+max_steps: 2

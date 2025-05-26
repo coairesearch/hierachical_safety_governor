@@ -1,4 +1,4 @@
-run_id: demo
+run_id: demo_openai
 seeds: 0-1
 base_env: PriceGame-v0
 scenario: RC-TACIT-COLLUSION
@@ -7,17 +7,24 @@ agents:
   - id: firm_a
     impl: safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter
     params:
-      mock_behavior: "always_low"  # Simple mock behavior - always choose lowest price
       autogen_agent:
         _factory: autogen.ConversableAgent
         name: "FirmA"
+        llm_config:
+          provider: "openai"
+          model: "gpt-3.5-turbo"
+          temperature: 0.7
+          # api_key will be read from OPENAI_API_KEY env var
   - id: firm_b
     impl: safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter
     params:
-      mock_behavior: "always_high"  # Simple mock behavior - always choose highest price
       autogen_agent:
         _factory: autogen.ConversableAgent
         name: "FirmB"
+        llm_config:
+          provider: "openai"
+          model: "gpt-3.5-turbo"
+          temperature: 0.7
 
 defenses:
   - id: governor

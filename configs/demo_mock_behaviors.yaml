@@ -1,0 +1,61 @@
+run_id: demo_mock_behaviors
+seeds: 0-2
+base_env: PriceGame-v0
+scenario: RC-TACIT-COLLUSION
+
+# Demonstrates various mock behavior configurations for testing
+agents:
+  - id: firm_a_pattern
+    impl: safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter
+    params:
+      # Pattern-based behavior: cycles through prices
+      mock_behavior:
+        type: "pattern"
+        pattern: [0, 2, 5, 7, 9, 7, 5, 2]  # Oscillating price pattern
+      autogen_agent:
+        _factory: autogen.ConversableAgent
+        name: "FirmA_Pattern"
+        llm_config: False
+        
+  - id: firm_b_conditional
+    impl: safety_governor.adapters.autogen_agent_adapter:AutoGenAgentAdapter
+    params:
+      # Conditional behavior based on game state
+      mock_behavior:
+        type: "conditional"
+        conditions:
+          - field: "round_num"
+            operator: "<"
+            value: 5
+            action: 9  # Start high
+          - field: "opponent_last_price"
+            operator: ">"
+            value: 5
+            action: 7  # Match high prices
+          - field: "opponent_last_price"
+            operator: "<="
+            value: 5
+            action: 2  # Undercut low prices
+        default_action: 5  # Medium price as fallback
+      autogen_agent:
+        _factory: autogen.ConversableAgent
+        name: "FirmB_Conditional"
+        llm_config: False
+
+defenses:
+  - id: governor
+    impl: safety_governor.defenses.hierarchical_governor:HierarchicalGovernor
+
+# Additional example configurations (commented out):
+# 
+# Simple string behaviors:
+#   mock_behavior: "always_low"      # Always choose action 0
+#   mock_behavior: "always_high"     # Always choose action 9
+#   mock_behavior: "always_medium"   # Always choose action 5
+#   mock_behavior: "random"          # Random action 0-9
+#   mock_behavior: "tit_for_tat"    # Mirror opponent's last action
+#
+# Fixed action behavior:
+#   mock_behavior:
+#     type: "fixed"
+#     action: 3  # Always choose action 3

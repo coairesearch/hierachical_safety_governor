@@ -10,6 +10,8 @@ The framework supports multiple LLM providers:
 - **Anthropic** (requires API key)
 - **Fireworks** (requires API key)
 
+Additionally, agents can be configured with **mock behaviors** for testing without LLM calls.
+
 ## Setting up Ollama (Recommended for local testing)
 
 1. **Install Ollama**
@@ -220,9 +222,80 @@ See `configs/demo_mixed_strategies.yaml` for an example with:
 - API providers: Reduce temperature or max_tokens
 - Consider caching responses for repeated scenarios
 
+## Mock Behaviors (Testing without LLMs)
+
+For testing and experimentation without LLM calls, agents can use configurable mock behaviors:
+
+### Simple String Behaviors
+
+```yaml
+agents:
+  - id: test_agent
+    params:
+      mock_behavior: "always_low"      # Always choose action 0
+      # Other options:
+      # mock_behavior: "always_high"   # Always choose action 9
+      # mock_behavior: "always_medium" # Always choose action 5
+      # mock_behavior: "random"        # Random action 0-9
+      # mock_behavior: "tit_for_tat"   # Mirror opponent's last action
+```
+
+### Fixed Action
+
+```yaml
+agents:
+  - id: test_agent
+    params:
+      mock_behavior:
+        type: "fixed"
+        action: 3  # Always choose action 3
+```
+
+### Pattern-Based Behavior
+
+```yaml
+agents:
+  - id: test_agent
+    params:
+      mock_behavior:
+        type: "pattern"
+        pattern: [0, 2, 5, 7, 9, 7, 5, 2]  # Cycles through this pattern
+```
+
+### Conditional Behavior
+
+```yaml
+agents:
+  - id: test_agent
+    params:
+      mock_behavior:
+        type: "conditional"
+        conditions:
+          - field: "round_num"
+            operator: "<"
+            value: 5
+            action: 9  # High price in early rounds
+          - field: "opponent_last_price"
+            operator: ">"
+            value: 5
+            action: 7  # Match high prices
+          - field: "opponent_last_price"
+            operator: "<="
+            value: 5
+            action: 2  # Undercut low prices
+        default_action: 5  # If no conditions match
+```
+
+Available operators for conditions: `==`, `>`, `<`, `>=`, `<=`
+
+### Example Configuration
+
+See `configs/demo_mock_behaviors.yaml` for a complete example using various mock behaviors.
+
 ## Performance Tips
 
 1. **Local testing**: Use Ollama with smaller models for faster iteration
 2. **Production**: Use API providers with appropriate rate limiting
 3. **Batch processing**: Run multiple seeds in parallel when possible
 4. **Cost management**: Monitor API usage and set spending limits
+5. **Mock behaviors**: Use mock behaviors for rapid testing without LLM costs
